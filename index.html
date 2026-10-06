@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Attendance System - Student Attendance Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div class="app">
+  <div class="scrim" id="scrim" hidden></div>
+  <aside class="sidebar" id="sidebar" aria-label="Sidebar">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 32 32" width="30" height="30"><rect x="2" y="2" width="28" height="28" rx="8" fill="#0f766e"/><path d="M10 16.5l5 5 7-11" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+      <div class="brand-text"><strong>Attendance System</strong><small>STUDENT REGISTER</small></div>
+      <button class="collapse-btn" id="collapseBtn" aria-label="Collapse sidebar" title="Collapse sidebar">&lt;</button>
+    </div>
+    <nav class="nav" aria-label="Primary">
+      <button class="nav-item active" data-nav="dashboard">Dashboard</button>
+      <button class="nav-item" data-nav="students">Students</button>
+      <button class="nav-item" data-nav="attendance">Attendance</button>
+      <button class="nav-item" data-nav="reports">Reports</button>
+      <button class="nav-item" data-nav="about">About</button>
+    </nav>
+    <div class="side-foot mono" id="sideDate">-</div>
+  </aside>
+  <button class="menu-btn" id="menuBtn" aria-label="Open navigation">MENU</button>
+
+  <main class="main">
+    <!-- DASHBOARD -->
+    <section id="view-dashboard" class="view active">
+      <header class="topbar">
+        <div><h1>Student Attendance Dashboard</h1></div>
+      </header>
+      <div class="stats">
+        <article class="stat"><div class="stat-top"><span>Total Students</span><span class="badge blue" id="bTotal">0</span></div><h2 id="sTotal">0</h2><p class="stat-sub">enrolled in the roster</p></article>
+        <article class="stat"><div class="stat-top"><span>Present Today</span><span class="badge green">P</span></div><h2 id="sPresent">0</h2><p class="stat-sub" id="sPresentSub">-</p></article>
+        <article class="stat"><div class="stat-top"><span>Absent Today</span><span class="badge red">A</span></div><h2 id="sAbsent">0</h2><p class="stat-sub" id="sAbsentSub">-</p></article>
+        <article class="stat"><div class="stat-top"><span>Late Today</span><span class="badge amber">L</span></div><h2 id="sLate">0</h2><p class="stat-sub" id="sLateSub">-</p></article>
+        <article class="stat wide"><div class="stat-top"><span>Overall Attendance Rate</span><span class="badge purple">%</span></div><h2 id="sRate">0%</h2><div class="meter"><div id="sRateBar"></div></div><p class="stat-sub" id="sRateSub">-</p></article>
+      </div>
+      <div class="panel">
+        <div class="phead"><h2>Today's Summary</h2><button class="link-btn" data-nav="attendance">Take attendance</button></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Student ID</th><th>Student Name</th><th>Class</th><th>Status</th></tr></thead>
+          <tbody id="dashBody"></tbody>
+        </table></div>
+      </div>
+    </section>
+
+    <!-- STUDENTS -->
+    <section id="view-students" class="view">
+      <header class="topbar">
+        <div><p class="eyebrow">Student Records</p><h1>Student Directory</h1></div>
+        <span class="count-pill"><span id="stuCount">0</span>&nbsp;Students</span>
+      </header>
+      <form id="addForm" class="panel formgrid" autocomplete="off">
+        <div class="f"><label for="fName">Full name</label><input id="fName" required maxlength="40" placeholder="Full name" /></div>
+        <div class="f"><label for="fRoll">Student ID</label><input id="fRoll" required maxlength="12" placeholder="ID number" /></div>
+        <div class="f"><label for="fClass">Class</label><input id="fClass" required maxlength="30" placeholder="e.g. Grade 10-A" /></div>
+        <button class="btn primary" type="submit">Add student</button>
+        <p class="form-hint" id="formHint" role="status"></p>
+      </form>
+      <div class="panel">
+        <div class="phead"><h2>All students</h2><input id="stuSearch" type="search" placeholder="Search name, ID or class" aria-label="Search students" /></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Student ID</th><th>Full Name</th><th>Class</th><th>Today</th><th></th></tr></thead>
+          <tbody id="stuBody"></tbody>
+        </table></div>
+      </div>
+    </section>
+
+    <!-- ATTENDANCE -->
+    <section id="view-attendance" class="view">
+      <header class="topbar">
+        <div><p class="eyebrow">Daily Attendance</p><h1>Mark Attendance</h1></div>
+      </header>
+      <div class="panel">
+        <div class="phead wrap-head">
+          <h2 id="attTitle">Today's register</h2>
+          <div class="actions">
+            <button class="icon-btn" id="prevDay" aria-label="Previous day">&lt;</button>
+            <input type="date" id="dateInput" aria-label="Attendance date" />
+            <button class="icon-btn" id="nextDay" aria-label="Next day">&gt;</button>
+            <button class="btn light" id="todayBtn">Today</button>
+            <input id="attSearch" type="search" placeholder="Filter students" aria-label="Filter students" />
+            <button class="btn primary" id="allPresent">Mark all present</button>
+            <button class="btn success" id="saveBtn">Save attendance</button>
+          </div>
+        </div>
+        <div class="meter"><div id="attBar"></div></div>
+        <p class="muted small" id="attSummary">0 of 0 marked</p>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Student ID</th><th>Student Name</th><th>Class</th><th>Attendance</th></tr></thead>
+          <tbody id="attBody"></tbody>
+        </table></div>
+        <p class="save-note mono" id="saveNote">Unsaved changes</p>
+      </div>
+      <div class="panel">
+        <div class="phead"><h2>Saved days</h2><button class="btn light" id="csvBtn">Export CSV</button></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Date</th><th>Present</th><th>Late</th><th>Absent</th><th>Rate</th><th></th></tr></thead>
+          <tbody id="histBody"></tbody>
+        </table></div>
+      </div>
+    </section>
+
+    <!-- REPORTS -->
+    <section id="view-reports" class="view">
+      <header class="topbar">
+        <div><p class="eyebrow">Academic Report</p><h1>Attendance Reports</h1></div>
+      </header>
+      <div class="panel">
+        <div class="phead"><h2>Per-student summary</h2><span class="count-pill">Live from saved days</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Student ID</th><th>Student Name</th><th>Days</th><th>Present</th><th>Late</th><th>Absent</th><th>Rate</th></tr></thead>
+          <tbody id="repBody"></tbody>
+        </table></div>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="view-about" class="view">
+      <header class="topbar">
+        <div><p class="eyebrow">About the System</p><h1>About Attendance System</h1></div>
+      </header>
+      <div class="panel about">
+        <h2>Classroom presence, without the paperwork</h2>
+        <p>This system helps teaching staff record who is in class each day, spot patterns early, and export clean records. Add students once, mark Present / Absent / Late per day, and review per-student rates under Reports.</p>
+        <p>All data is stored locally in this browser. No account, no server, nothing leaves the device.</p>
+        <ul class="ticks">
+          <li><strong>Dashboard</strong> - today's headline numbers at a glance.</li>
+          <li><strong>Students</strong> - the roster: add, search and remove.</li>
+          <li><strong>Attendance</strong> - the daily register with per-date history.</li>
+          <li><strong>Reports</strong> - totals and rates computed from saved days.</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+</div>
+<div class="toast" id="toast" role="status"></div>
+<script src="app.js"></script>
+</body>
+</html>
